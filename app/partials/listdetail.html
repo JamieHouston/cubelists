@@ -1,0 +1,13 @@
+<h3>{{list.Title}}</h3>
+<form ng:submit="addItem()">
+  <div>
+  	<input type="text" name="itemTitle" size="35" placeholder="add new item">
+  	<input type="submit" value="add">
+</div>
+</form>
+<div>Filter: <input name="query"/></div>
+	<li ng:repeat="item in list.Items.$filter(query)">
+      <dt>{{item.Complete | checkmark}}</dt>
+      <dd>{{item.Title}}</dd>
+    </dl>
+	</li>
