@@ -7,7 +7,7 @@ function ListController(List) {
  	this.lists = List.query();
 
  	this.addList = function(){
- 		var list = {Title: this.listTitle, Id: 0};
+ 		var list = {Title: this.listTitle};
  		this.lists.push(list);
  		List.save({list: list});
  		this.listTitle = '';
@@ -19,6 +19,7 @@ function ListDetails(List){
 
  	this.addItem = function(){
  		this.list.Items.push({Title: this.itemTitle});
+
  		this.itemTitle = '';
  	};
 }

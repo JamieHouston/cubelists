@@ -1,4 +1,4 @@
-<h3>{{list.Title}}</h3>
+<h3>{{list.List.Title}}</h3>
 <form ng:submit="addItem()">
   <div>
   	<input type="text" name="itemTitle" size="35" placeholder="add new item">
@@ -10,4 +10,4 @@
       <dt>{{item.Complete | checkmark}}</dt>
       <dd>{{item.Title}}</dd>
     </dl>
-	</li>
+</li>

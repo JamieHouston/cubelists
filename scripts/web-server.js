@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-var sys = require('sys'),
+var sys = require('util'),
     http = require('http'),
     fs = require('fs'),
     url = require('url'),
     events = require('events');
 
-var DEFAULT_PORT = 8000;
+var DEFAULT_PORT = 8001;
 
 function main(argv) {
   new HttpServer({
