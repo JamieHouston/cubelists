@@ -2,6 +2,8 @@
   "name": "any-tag-2",
   "version": "0.1.0",
   "dependencies": {
-    "express": "2.5.0"
+    "express": ">= 2.5.0",
+    "mongodb": ">= 0.9.6-7",
+    "journey": ">= 0.4.0-pre-2"
   }
 }

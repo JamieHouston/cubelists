@@ -9,7 +9,7 @@ function ListController(List) {
  	this.addList = function(){
  		var list = {Title: this.listTitle};
  		this.lists.push(list);
- 		List.save({list: list});
+ 		//List.save({list: list});
  		this.listTitle = '';
  	};
 }
