@@ -1,57 +1,32 @@
 var PORT = 8001;
-var express = require('express');
+var journey = require('journey');
 var TagListProvider = require('./provider-mongodb').TagListProvider;
 
-var app = module.exports = express.createServer();
-
-// Configuration
-
-app.configure(function(){
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler()); 
-});
+var router = new (journey.Router);
 
 var tagListProvider = new TagListProvider('localhost', 27017);
+
 // Routes
+router.map(function(){
+	this.root.bind(function (req, res){res.send(400, {}, "invalid")});
+	this.get(/^list\/([\d]*)$/).bind(function(req, res, id){
+		tagListProvider.findById(1, function(error, tagList) {
+        	res.send(200, {}, tagList);
+    	});
+	});
+});
 
-app.get('/', function(req, res){
-    tagListProvider.findAll( function(error,docs){
-        res.render(docs);
+require('http').createServer(function (request, response) {
+    var body = "";
+
+    request.addListener('data', function (chunk) { body += chunk });
+    request.addListener('end', function () {
+        //
+        // Dispatch the request to the router
+        //
+        router.handle(request, body, function (result) {
+            response.writeHead(result.status, result.headers);
+            response.end(result.body);
+        });
     });
-});
-
-app.post('/list/new', function(req, res){
-    tagListProvider.save({
-        title: req.param('title')
-    }, function( error, docs) {
-        res.redirect('/')
-    });
-});
-
-app.get('/list/:id', function(req, res) {
-    tagListProvider.findById(req.params.id, function(error, tagList) {
-        res.render(tagList);
-    });
-});
-
-app.post('/list/:id/item/new', function(req, res) {
-    tagListProvider.addListItem(req.params.id, {
-        title: req.param('title'),
-        created_at: new Date()
-       } , function( error, docs) {
-           res.redirect('/list/' + req.params.id);
-       });
-});
-
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+}).listen(PORT);

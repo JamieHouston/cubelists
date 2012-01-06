@@ -56,9 +56,9 @@ TagListProvider.prototype.save = function(taglists, callback) {
         for( var i =0;i< taglists.length;i++ ) {
           taglist = taglists[i];
           taglist.created_at = new Date();
-          if( taglist.comments === undefined ) taglist.comments = [];
-          for(var j =0;j< taglist.comments.length; j++) {
-            taglist.comments[j].created_at = new Date();
+          if( taglist.items === undefined ) taglist.items = [];
+          for(var j =0;j< taglist.items.length; j++) {
+            taglist.items[j].created_at = new Date();
           }
         }
 
