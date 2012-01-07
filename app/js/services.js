@@ -4,7 +4,7 @@
  * App service which is responsible for the main configuration of the app.
  */
 angular.service('List', function($resource) {
- return $resource('api/list/:listId', {}, {
+ return $resource('http://localhost:8001/list/:listId', {}, {
    query: {method: 'GET', params: {listId: ''}, isArray: true}
  });
 });
