@@ -13,11 +13,11 @@ var app = express.createServer();
 	   cmd.addListener('row', function(r) { console.dir(r); } );
 	}
 
-	db.auth("taglist", "root", "sa");
-	dump_rows(db.execute("insert into list (title) VALUES (?)",title));
+	db.auth("TagList", "root", "sa");
+	dump_rows(db.execute("insert into List (title) VALUES ('test1');"));
 	db.close();
  }
- 	res.send('Adding List:  ' + req.params.title);
+
  	addList(req.params.title);
     res.send('List Created:  ' + req.params.title);
 });

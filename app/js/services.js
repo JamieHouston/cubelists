@@ -4,8 +4,9 @@
  * App service which is responsible for the main configuration of the app.
  */
 angular.service('List', function($resource) {
- return $resource('api/list/:listId', {}, {
-   query: {method: 'GET', params: {listId: ''}, isArray: true}
+ return $resource('api2/list/:listId', {}, {
+   query: {method: 'GET', params: {listId: ''}, isArray: true},
+   save: {method: 'POST', params: {listId: 'save'}}
  });
 });
 
