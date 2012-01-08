@@ -4,18 +4,18 @@
  * App service which is responsible for the main configuration of the app.
  */
 angular.service('List', function($resource) {
- return $resource('http://localhost:8001/list/:listId', {}, {
-   query: {method: 'GET', params: {listId: ''}, isArray: true}
+ return $resource('api/list/:listId', {}, {
+   query: {method: 'GET', params: {listId: 'all'}, isArray: true}
  });
 });
 
-angular.services('Connect', function($resource){
+angular.service('Connect', function($resource){
   var id = 0;
-  $xhr('GET', 'http://localhost:8002/join', { nick: 'taglist' }, function(code, response) {
+  $xhr('GET', 'api/join', { nick: 'taglist' }, function(code, response) {
     //handle the server's response to our nickname and join request
     id   = response.id;
   });
-
+});
 
 angular.service('myAngularApp', function($route, $location, $window) {
 
@@ -36,4 +36,3 @@ angular.service('myAngularApp', function($route, $location, $window) {
   });
 
 }, {$inject:['$route', '$location', '$window'], $eager: true});
-
