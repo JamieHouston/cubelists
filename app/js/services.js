@@ -9,6 +9,13 @@ angular.service('List', function($resource) {
  });
 });
 
+angular.services('Connect', function($resource){
+  var id = 0;
+  $xhr('GET', 'http://localhost:8002/join', { nick: 'taglist' }, function(code, response) {
+    //handle the server's response to our nickname and join request
+    id   = response.id;
+  });
+
 
 angular.service('myAngularApp', function($route, $location, $window) {
 
@@ -29,3 +36,4 @@ angular.service('myAngularApp', function($route, $location, $window) {
   });
 
 }, {$inject:['$route', '$location', '$window'], $eager: true});
+
