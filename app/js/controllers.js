@@ -1,7 +1,7 @@
 /* App Controllers */
 
 
-function ListController(List, $xhr) {
+function ListController(List) {
 	var self = this;
  
  	this.lists = List.query();
@@ -9,9 +9,7 @@ function ListController(List, $xhr) {
  	this.addList = function(){
  		var list = {Title: this.listTitle};
  		this.lists.push(list);
-
- 		$xhr('POST','api2/list',list);
- 		//List.save({Title: list.Title});
+ 		List.save({title: this.listTitle});
  		this.listTitle = '';
  	};
 }
