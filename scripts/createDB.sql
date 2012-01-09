@@ -214,3 +214,14 @@ insert into ListItem(Title, ListID)
 VALUES
 ('My second item',1)
 GO
+
+CREATE PROCEDURE CreateList(
+@UserID		INT,
+@Title		VARCHAR(100))
+AS
+BEGIN
+INSERT INTO Lists(UserID, Title)
+VALUES
+(@UserID, @Title)
+END
+GO
