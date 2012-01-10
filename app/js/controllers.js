@@ -26,3 +26,41 @@ function ListDetails(List){
 
 function ConfigController() {
 }
+
+function TodoController (persistencejs) {
+    var self = this;
+    var keyname = self.params.keyname;
+
+    self.newTitle = "";
+
+    self.addItem = function(){
+        if (self.newTitle.length){
+            var newItem = {title: self.newTitle}
+        
+            self.items.push(newItem);
+            persistencejs.add(self.newTitle);
+            self.newTitle = "";
+        }
+    }
+
+    self.items = [];
+
+    self.loadItems = function(){
+        persistencejs.fetchAll(self);
+    }
+
+    self.loadParentList = function(){
+        persistencejs.get(self);
+    }
+    
+    self.refresh = function(){ self.$apply(); }
+
+    if (self.keyname && self.keyname.length){
+        self.loadParentList();
+    } else {
+        self.loadItems();
+    }
+
+};
+
+TodoController.$inject = ['persistencejs'];

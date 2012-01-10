@@ -1,12 +1,12 @@
-<form ng:submit="addList()">
+<form ng:submit="addItem()">
   <div>
-  	<input type="text" name="listTitle" size="35" placeholder="add new list">
+  	<input type="text" name="newTitle" size="35" placeholder="new title">
   	<input type="submit" value="add">
 </div>
 </form>
 <h2>Current Lists</h2>
 <ol>
-	<li ng:repeat="list in lists">
-		<a href="#/list/{{list.Id}}">{{list.Title}}</a>
+	<li ng:repeat="item in items">
+		<a href="#/item/{{item.keyname}}">{{item.title}}</a>
 	</li>
 </ol>
