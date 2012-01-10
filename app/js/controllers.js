@@ -29,81 +29,28 @@ function ConfigController() {
 
 function TodoController (persistencejs) {
     var self = this;
-    self.newTodo = "";
-	self.editTodoStartContent = "";
+    self.newTitle = "";
 
-    self.addTodo = function() {
-        if (self.newTodo.length === 0) return;
+    self.addItem = function(){
+        if (self.newTitle.length){
+            var newItem = {title: self.newTitle}
         
-        self.todos.push({
-            content: self.newTodo,
-            done: false,
-            editing: false
-        });
-		persistencejs.add(self.newTodo);
-        self.newTodo = "";
-    };
-
-    self.editTodo = function(todo) {
-        angular.forEach(self.todos, function(value) {
-            value.editing = false;
-        });
-        todo.editing = true;
-		self.editTodoStartContent = todo.content;
-    };
-
-	self.changeStatus = function(todo){
-		persistencejs.changeStatus(todo);
-	};
-	
-    self.finishEditing = function(todo) {
-        todo.editing = false;
-		persistencejs.edit(self.editTodoStartContent, todo.content);
-    };
-
-    self.removeTodo = function(todo) {
-        angular.Array.remove(self.todos, todo);
-		persistencejs.remove(todo);
-    };
-
-    self.todos = [];
-
-    var countTodos = function(done) {
-        return function() {
-            return angular.Array.count(self.todos, function(x) {
-                return x.done === (done === "done");
-            });
+            self.items.push(newItem);
+            persistencejs.add(self.newTitle);
+            self.newTitle = "";
         }
-    };
+    }
 
-    self.remainingTodos = countTodos("undone");
+    self.items = [];
 
-    self.finishedTodos = countTodos("done");
+    self.loadItems = function(){
+        persistencejs.fetchAll(self);
+    }
+    
+    self.refresh = function(){ self.$apply(); }
 
-    self.clearCompletedItems = function() {
-        var oldTodos = self.todos;
-        self.todos = [];
-        angular.forEach(oldTodos, function(todo) {
-            if (!todo.done) self.todos.push(todo);
-        });
-		persistencejs.clearCompletedItems();
-    };
+    self.loadItems();
 
-    self.hasFinishedTodos = function() {
-        return self.finishedTodos() > 0;
-    };
-
-    self.hasTodos = function() {
-        return self.todos.length > 0;
-    };
-	
-	self.loadTodos = function(){
-		persistencejs.fetchAll(self);
-	}
-	
-	self.refresh = function(){ self.$apply(); }
-
-	self.loadTodos();
 };
 
 TodoController.$inject = ['persistencejs'];

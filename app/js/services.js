@@ -10,21 +10,42 @@ angular.service('List', function($resource) {
 });
 
 angular.service('persistencejs', function() {
-  persistence.store.websql.config(persistence, 'taglist', 'todo database', 5*1024*1024);
-  var Todo = persistence.define('todo', {
-    content: 'TEXT',
-    done: 'BOOL'
+  persistence.store.websql.config(persistence, 'anytag', 'tagitem database', 5*1024*1024);
+
+  var TagItem = persistence.define('tagitem', {
+    title: 'TEXT',
+    details: 'TEXT',
+    complete: 'BOOL'
   });
+
   persistence.schemaSync();
   return {
-    add: function(item){
-      var t = new Todo();
-      t.content = item;
-      t.done = false;
+    add: function(title){
+      var t = new TagItem();
+      t.title = title;
+      t.complete = false;
       persistence.add(t);
       persistence.flush();
     },
-    
+
+    fetchAll: function(controller){
+      TagItem.all().list(function(items){
+        var itemCount = items.length;
+        var items = [];
+        items.forEach(function(item){
+          items.push({
+            title: item.title,
+            complete: item.complete
+          });
+          if(--itemCount == 0){
+            controller.items = items;
+            controller.refresh();
+          }
+        });
+      });
+    }
+
+    /*
     edit: function(startContent, endContent){
       Todo.all().filter('content','=',startContent).one(function(item){
         item.content = endContent;
@@ -63,14 +84,14 @@ angular.service('persistencejs', function() {
           }
         });
       });
-    },
+      */
   };
 });
 
 
 angular.service('myAngularApp', function($route, $location, $window) {
 
-  $route.when('/lists', {template: 'partials/lists.html', controller: ListController});
+  $route.when('/lists', {template: 'partials/lists.html', controller: TodoController});
   $route.when('/config', {template: 'partials/config.html', controller: ConfigController});
   $route.when('/list/:listId', {template: 'partials/listdetail.html', controller: ListDetails});
 
