@@ -12,10 +12,11 @@ angular.service('List', function($resource) {
 angular.service('persistencejs', function() {
   persistence.store.websql.config(persistence, 'anytag', 'tagitem database', 5*1024*1024);
 
-  var TagItem = persistence.define('tagitem', {
+  var TagItem = persistence.define('TagItem', {
     title: 'TEXT',
     details: 'TEXT',
-    complete: 'BOOL'
+    complete: 'BOOL',
+    keyname: 'TEXT'
   });
 
   persistence.schemaSync();
@@ -23,7 +24,9 @@ angular.service('persistencejs', function() {
     add: function(title){
       var t = new TagItem();
       t.title = title;
+      t.details = "test details";
       t.complete = false;
+      t.keyname = getKeyname();
       persistence.add(t);
       persistence.flush();
     },
@@ -109,3 +112,16 @@ angular.service('myAngularApp', function($route, $location, $window) {
 
 }, {$inject:['$route', '$location', '$window'], $eager: true});
 
+function getKeyname(){
+  var keyChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+  var keyLength = 8;
+  function randomString() {
+      var results = '';
+      for (var i=0; i<keyLength; i++){
+          var randomPoz = Math.floor(Math.random() * keyChars.length);
+          results += keyChars.substring(randomPoz, randomPoz+1);
+      }
+      return results;
+  }
+  return randomString();
+}
