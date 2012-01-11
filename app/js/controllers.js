@@ -27,6 +27,48 @@ function ListDetails(List){
 function ConfigController() {
 }
 
+function ChildController (persistencejs){
+    var self = this;
+
+    self.key = this.params.key;
+
+    self.load = function(){
+        self.cube = persistencejs.get(self);
+    }
+
+    self.load();
+}
+
+function CubeController (persistencejs){
+    var self = this;
+
+    self.addCube = function(){
+        if (self.newValue.length){
+            var cube = {
+                value: self.newValue,
+                key: generateKey()
+            };
+        
+            self.items.push(cube);
+            persistencejs.add(cube);
+            self.newValue = "";
+        }
+    }
+
+    self.loadItems = function(){
+        persistencejs.fetchAll(self);
+    }
+    
+    self.refresh = function(){
+        //self.$apply(); 
+        // doesn't seem to do anything...?
+     }
+
+    self.newValue = "";
+    self.items = [];
+    self.loadItems();
+}
+
 function TodoController (persistencejs) {
     var self = this;
     var keyname = self.params.keyname;
@@ -35,7 +77,10 @@ function TodoController (persistencejs) {
 
     self.addItem = function(){
         if (self.newTitle.length){
-            var newItem = {title: self.newTitle}
+            var newItem = {
+                title: self.newTitle,
+                key: generateKey()
+            };
         
             self.items.push(newItem);
             persistencejs.add(self.newTitle);
@@ -63,4 +108,19 @@ function TodoController (persistencejs) {
 
 };
 
+CubeController.$inject = ['persistencejs'];
 TodoController.$inject = ['persistencejs'];
+
+function generateKey(){
+  var keyChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+  var keyLength = 8;
+  function randomString() {
+      var results = '';
+      for (var i=0; i<keyLength; i++){
+          var randomPoz = Math.floor(Math.random() * keyChars.length);
+          results += keyChars.substring(randomPoz, randomPoz+1);
+      }
+      return results;
+  }
+  return randomString();
+}
