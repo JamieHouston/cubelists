@@ -1,29 +1,4 @@
 /* App Controllers */
-
-
-function ListController(List) {
-	var self = this;
- 
- 	this.lists = List.query();
-
- 	this.addList = function(){
- 		var list = {Title: this.listTitle};
- 		this.lists.push(list);
- 		List.save({title: this.listTitle});
- 		this.listTitle = '';
- 	};
-}
-
-function ListDetails(List){
-	this.list = List.get({listId: this.params.listId});
-
- 	this.addItem = function(){
- 		this.list.Items.push({Title: this.itemTitle});
-
- 		this.itemTitle = '';
- 	};
-}
-
 function ConfigController() {
 }
 
@@ -39,77 +14,17 @@ function ChildController (persistencejs){
     self.load();
 }
 
-function CubeController (persistencejs){
+function CubeController ($xhr){
     var self = this;
 
-    self.addCube = function(){
-        if (self.newValue.length){
-            var cube = {
-                value: self.newValue,
-                key: generateKey()
-            };
-        
-            self.items.push(cube);
-            persistencejs.add(cube);
-            self.newValue = "";
-        }
-    }
-
-    self.loadItems = function(){
-        persistencejs.fetchAll(self);
-    }
-    
-    self.refresh = function(){
-        //self.$apply(); 
-        // doesn't seem to do anything...?
-     }
 
     self.newValue = "";
     self.items = [];
-    self.loadItems();
-}
-
-function TodoController (persistencejs) {
-    var self = this;
-    var keyname = self.params.keyname;
-
-    self.newTitle = "";
-
-    self.addItem = function(){
-        if (self.newTitle.length){
-            var newItem = {
-                title: self.newTitle,
-                key: generateKey()
-            };
-        
-            self.items.push(newItem);
-            persistencejs.add(self.newTitle);
-            self.newTitle = "";
-        }
-    }
-
-    self.items = [];
-
-    self.loadItems = function(){
-        persistencejs.fetchAll(self);
-    }
-
-    self.loadParentList = function(){
-        persistencejs.get(self);
-    }
     
-    self.refresh = function(){ self.$apply(); }
-
-    if (self.keyname && self.keyname.length){
-        self.loadParentList();
-    } else {
-        self.loadItems();
-    }
-
-};
-
-CubeController.$inject = ['persistencejs'];
-TodoController.$inject = ['persistencejs'];
+    $xhr('JSON', 'http://localhost:27080/cube/cube/_find', function(code, data) {
+        self.items = JSON.parse(data.results);
+    });
+}
 
 function generateKey(){
   var keyChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
