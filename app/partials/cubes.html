@@ -1,0 +1,12 @@
+<form ng:submit="addCube()">
+  <div>
+  	<input type="text" name="newValue" size="35" placeholder="value">
+  	<input type="submit" value="add">
+</div>
+</form>
+<h2>Current Items</h2>
+<ol>
+	<li ng:repeat="item in items">
+		<a href="#/item/{{item.key}}">{{item.value}}</a>
+	</li>
+</ol>
