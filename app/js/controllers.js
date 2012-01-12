@@ -13,16 +13,18 @@ function ChildController ($xhr){
 
 }
 
-function CubeController ($xhr){
+function CubeController ($resource, $xhr){
     var self = this;
 
 
     self.newValue = "";
     self.items = [];
 
-    $xhr('GET', 'api/cubes/', function(code, data) {
-        self.items = data;
-    });
+    var Wcf = $resource('api/cubes', {},
+        {create: {method: 'POST'}}
+    );
+    
+    self.items = Wcf.query();
 
     self.addCube = function(){
         if (self.newValue.length){
@@ -33,10 +35,18 @@ function CubeController ($xhr){
                 parentKey: null
             };
 
-            $xhr('POST', 'api/cubes/', cube, function(code, data) {
-                cube.id = data.id;
-                self.items.push(cube);
-            });
+            //Wcf.save(cube);
+            jQuery.ajax({ cache: false
+                , type: "GET" // XXX should be POST
+                , dataType: "json"
+                , url: "/api/cubes/create"
+                , data: cube
+                , error: function () {
+                    alert("error connecting to server");
+                }
+                , success: function() { alert('yay!');}
+           });
+
             self.newValue = "";
         }
     }
