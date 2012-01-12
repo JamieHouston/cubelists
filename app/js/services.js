@@ -1,3 +1,7 @@
+angular.service('wcf', function($resource){
+  
+});
+
 angular.service('myAngularApp', function($route, $location, $window) {
 
   $route.when('/cubes', {template: 'partials/cubes.html', controller: CubeController});

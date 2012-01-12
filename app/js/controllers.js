@@ -2,16 +2,15 @@
 function ConfigController() {
 }
 
-function ChildController (persistencejs){
+function ChildController ($xhr){
     var self = this;
 
     self.key = this.params.key;
 
-    self.load = function(){
-        self.cube = persistencejs.get(self);
-    }
+    $xhr('GET', 'api/cubes/' + self.key, function(code, data) {
+        self.cube = data;
+    });
 
-    self.load();
 }
 
 function CubeController ($xhr){
@@ -20,10 +19,27 @@ function CubeController ($xhr){
 
     self.newValue = "";
     self.items = [];
-    
-    $xhr('JSON', 'http://localhost:27080/cube/cube/_find', function(code, data) {
-        self.items = JSON.parse(data.results);
+
+    $xhr('GET', 'api/cubes/', function(code, data) {
+        self.items = data;
     });
+
+    self.addCube = function(){
+        if (self.newValue.length){
+            var cube = {
+                value: self.newValue,
+                keyName: generateKey(),
+                columnType: 'string',
+                parentKey: null
+            };
+
+            $xhr('POST', 'api/cubes/', cube, function(code, data) {
+                cube.id = data.id;
+                self.items.push(cube);
+            });
+            self.newValue = "";
+        }
+    }
 }
 
 function generateKey(){
