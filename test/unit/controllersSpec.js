@@ -2,13 +2,10 @@
 
 describe('CubeController', function(){
   var cubeController,
-      $persistence,
       scope;
 
   beforeEach(function(){
     scope = angular.scope();
-    $persistence = scope.$service('persistencejs');
-    $persistence.expectfetchAll();
     cubeController = scope.$new(CubeController);
   });
 

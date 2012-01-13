@@ -2,7 +2,7 @@ angular.service('wcf', function($resource){
   
 });
 
-angular.service('myAngularApp', function($route, $location, $window) {
+angular.service('cubesApp', function($route, $location, $window) {
 
   $route.when('/cubes', {template: 'partials/cubes.html', controller: CubeController});
   $route.when('/config', {template: 'partials/config.html', controller: ConfigController});
