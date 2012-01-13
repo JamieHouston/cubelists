@@ -2,6 +2,7 @@
   "name": "any-tag-2",
   "version": "0.1.1",
   "dependencies": {
+    "express": "2.x.x",
     "connect": "1.x.x",
     "redis": "0.x.x"
   }
