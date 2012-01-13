@@ -37,14 +37,14 @@ function CubeController ($resource, $xhr){
 
             //Wcf.save(cube);
             jQuery.ajax({ cache: false
-                , type: "GET" // XXX should be POST
+                , type: "POST" // XXX should be POST
                 , dataType: "json"
-                , url: "/api/cubes/create"
+                , url: "/api/cubes"
                 , data: cube
                 , error: function () {
                     alert("error connecting to server");
                 }
-                , success: function() { alert('yay!');}
+                , success: function(data) {self.items.push(data);}
            });
 
             self.newValue = "";
