@@ -18,19 +18,38 @@ console.log(staticPath);
 app.use(express.static(staticPath));
 app.use(express.bodyParser());
 
+// get all of the parent cubes
 app.get('/api/cubes', function(req, res) {
     console.log('service cubes');
-    var tempCubes = [];
-    tempCubes.push({'keyName': '123', 'value': 'it works'});
-    res.send(tempCubes);
+    client.lrange('parentKey:master', 0, -1, function(err, reply){
+        console.log('got it: ' + reply);
+        if (reply){
+            var cubes = reply
+            res.send(cubes);
+        }
+    });
 });
 
+// get a single cube
+app.get('/api/cubes/:keyName', function(req, res) {
+    var keyName = req.params.keyName;
+    console.log('grabbing cube ' + keyName);
+    client.get(keyName, function(err, reply){
+        console.log('got it: ' + reply)
+        var cube = JSON.parse(reply);
+        res.send(cube);
+    });
+});
+
+// save a cube
 app.post('/api/cubes', function(req, res){
     console.log('creating cube');
     console.log(req.body);
     //console.log(req.params);
     //console.log(req.param);
-    client.set(req.body.keyName, req.body, redis.print);
+    //client.rpush('parentKey:master', req.body.keyName, redis.print);
+    client.rpush('parentKey:master', JSON.stringify(req.body), redis.print);
+    //client.set(req.body.keyName, JSON.stringify(req.body), redis.print);
    //client.set("string key", "string val", redis.print); 
    res.send(req.body);
 });
