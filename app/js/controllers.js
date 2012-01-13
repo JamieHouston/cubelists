@@ -31,8 +31,8 @@ function CubeController ($resource, $xhr){
             var cube = {
                 value: self.newValue,
                 keyName: generateKey(),
-                columnType: 'string',
-                parentKey: null
+                cubeType: 'string',
+                parentKey: 'master'
             };
 
             //Wcf.save(cube);

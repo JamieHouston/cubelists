@@ -21,7 +21,8 @@ app.use(express.bodyParser());
 // get all of the parent cubes
 app.get('/api/cubes', function(req, res) {
     console.log('service cubes');
-    client.lrange('parentKey:master', 0, -1, function(err, reply){
+    //client.lrange('parentKey:master', 0, -1, function(err, reply){
+        client.get('value:master:' + req.param.keyName, function(err, reply){
         console.log('got it: ' + reply);
         if (reply){
             var cubes = reply
@@ -43,43 +44,42 @@ app.get('/api/cubes/:keyName', function(req, res) {
 
 // save a cube
 app.post('/api/cubes', function(req, res){
-    console.log('creating cube');
-    console.log(req.body);
-    //console.log(req.params);
-    //console.log(req.param);
-    //client.rpush('parentKey:master', req.body.keyName, redis.print);
-    client.rpush('parentKey:master', JSON.stringify(req.body), redis.print);
-    //client.set(req.body.keyName, JSON.stringify(req.body), redis.print);
-   //client.set("string key", "string val", redis.print); 
+    var values = [];
+
+    Object.keys(req.body).forEach(function (parameter) {
+        var redisKey = 'key:' + req.body.keyName;
+        console.log('setting ' + redisKey + ' : ' + parameter + ' = ' + req.body[parameter]);
+        client.hset(redisKey, parameter, req.body[parameter]);
+    });
+
+    console.log(values);
    res.send(req.body);
 });
 app.listen(8000);
 
-// disable layout
-//app.set("view options", {layout: false});
 
-// make a custom html template
-/*
-app.register('.html', {
-	compile: function(str, options){
-  		return function(locals){
-    		return str;
-  		};
-	}
-});
-*/
-// Routes
-/*
 
-/*
-client.set("string key", "string val", redis.print);
-client.hset("hash key", "hashtest 1", "some value", redis.print);
-client.hset(["hash key", "hashtest 2", "some other value"], redis.print);
-client.hkeys("hash key", function (err, replies) {
-    console.log(replies.length + " replies:");
-    replies.forEach(function (reply, i) {
-        console.log("    " + i + ": " + reply);
-    });
-    client.quit();
-});
-*/
+// organization:
+
+// cubes are either instances or types
+// prefix of keyName determines what a cube is
+// instance: or type:
+
+// master is top level cube... everything needs one
+// instance:master and type:master
+
+// properties of cubes
+// keyName: unique key for this cube
+// parentKey: the container for this cube
+// cubeType: keyName of cube defining the type (an instance refers to a type, a type refers to another type or predefined definition like string)
+// value: the value of the cube... depending on what the cube is, this could be the type name or cube value
+
+// cubeType can be a list of a type, or a type. (such as a list of strings or string)
+
+// examples:
+
+// an email address
+// keyName: type:123
+// parentKey: type:master
+// cubeType: type:string
+// cubeValue: email
