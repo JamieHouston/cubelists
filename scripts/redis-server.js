@@ -78,8 +78,14 @@ app.listen(8000);
 
 // examples:
 
+/////////////////////
 // an email address
+
 // keyName: type:123
 // parentKey: type:master
 // cubeType: type:string
 // cubeValue: email
+
+/////////////////////
+// 
+// a grocery list
