@@ -1,16 +1,9 @@
 #! /usr/bin/env node
 
-var redis = require("redis"),
-    client = redis.createClient();
-
 var express = require('express');
+var dao = require('./redis-dao');
 
 var app = module.exports = express.createServer();
-
-
-client.on("error", function (err) {
-    console.log("Error " + err);
-});
 
 var staticPath = __dirname.replace('scripts','app');
 console.log(staticPath);
@@ -20,48 +13,22 @@ app.use(express.bodyParser());
 
 // get all of the parent cubes
 app.get('/api/cubes', function(req, res) {
-    var parentKey = 'instance:master';
-    client.hgetall(parentKey, function(err, reply){
-        console.log(reply);
-        var cubes = [];
-        for (key in reply){
-            cubes.push({
-                keyName: key,
-                value: reply[key],
-                parentKey: parentKey
-            });
-        }
-        console.log('cubes are :' + cubes);
-        res.send(cubes);
+    dao.getLists(function(lists){
+       res.send(lists); 
     });
 });
 
 // get a single cube
 app.get('/api/cubes/:keyName', function(req, res) {
-    var keyName = 'instance:' + req.params.keyName;
-    console.log('grabbing cube ' + keyName);
-    client.hgetall(keyName, function(err, reply){
-        console.log('got it: ' + reply)
-        var cube = reply;
-        res.send(cube);
+    var keyName = req.params.keyName;
+    dao.getList(keyName, function(list){
+        res.send(list);
     });
 });
 
 // save a cube
 app.post('/api/cubes', function(req, res){
-    var values = [];
-    var redisKey = 'instance:' + req.body.keyName;
-    
-    // add the cube values to one key
-    // TODO: figure out how to do this in one call, or queue them and submit at once?
-    Object.keys(req.body).forEach(function (parameter) {
-        console.log('setting ' + redisKey + ' : ' + parameter + ' = ' + req.body[parameter]);
-        client.hset(redisKey, parameter, req.body[parameter]);
-    });
-    
-    // add the cube key to it's parent
-    client.hset('instance:master', req.body.keyName, req.body.value);
-    console.log(values);
+    dao.saveList(req.body);
 
     // send it back
     res.send(req.body);
