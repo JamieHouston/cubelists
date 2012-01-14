@@ -15,7 +15,6 @@ function ChildController ($xhr){
 
 function CubeController ($resource, $xhr){
   function showCube(data){
-    data.viewPath = 'item/' + data.keyName.replace(':','/');
     self.items.push(data);
   }
 

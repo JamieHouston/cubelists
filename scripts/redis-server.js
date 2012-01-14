@@ -38,11 +38,11 @@ app.get('/api/cubes', function(req, res) {
 
 // get a single cube
 app.get('/api/cubes/:keyName', function(req, res) {
-    var keyName = req.params.keyName;
+    var keyName = 'instance:' + req.params.keyName;
     console.log('grabbing cube ' + keyName);
-    client.get(keyName, function(err, reply){
+    client.hgetall(keyName, function(err, reply){
         console.log('got it: ' + reply)
-        var cube = JSON.parse(reply);
+        var cube = reply;
         res.send(cube);
     });
 });
@@ -60,7 +60,7 @@ app.post('/api/cubes', function(req, res){
     });
     
     // add the cube key to it's parent
-    client.hset('instance:master', redisKey, req.body.value);
+    client.hset('instance:master', req.body.keyName, req.body.value);
     console.log(values);
 
     // send it back
