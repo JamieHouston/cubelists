@@ -5,27 +5,45 @@ function ConfigController() {
 function ChildController ($xhr){
     var self = this;
 
-    self.key = this.params.key;
+    self.keyName = this.params.keyName;
 
-    $xhr('GET', 'api/cubes/' + self.key, function(code, data) {
+    $xhr('GET', 'api/cubes/' + self.keyName, function(code, data) {
         self.cube = data;
     });
 
 }
 
 function CubeController ($resource, $xhr){
+  function showCube(data){
+    data.viewPath = 'item/' + data.keyName.replace(':','/');
+    self.items.push(data);
+  }
+
+  function showError (xhr, ajaxOptions, thrownError){
+      //alert(xhr.status);
+      // todo: throw this into the view nicely
+      alert(thrownError);
+    }    
+
     var self = this;
 
-
     self.newValue = "";
+
     self.items = [];
 
     var Wcf = $resource('api/cubes', {},
         {create: {method: 'POST'}}
     );
     
-    self.items = Wcf.query();
+    
+    Wcf.query(function(cubes){
+      cubes.forEach(function(cube){
+        showCube(cube);
+      });
+    });
 
+
+      
     self.addCube = function(){
         if (self.newValue.length){
             var cube = {
@@ -41,10 +59,8 @@ function CubeController ($resource, $xhr){
                 , dataType: "json"
                 , url: "/api/cubes"
                 , data: cube
-                , error: function () {
-                    alert("error connecting to server");
-                }
-                , success: function(data) {self.items.push(data);}
+                , error: showError
+                , success: showCube
            });
 
             self.newValue = "";

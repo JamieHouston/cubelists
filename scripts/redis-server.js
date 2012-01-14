@@ -20,14 +20,19 @@ app.use(express.bodyParser());
 
 // get all of the parent cubes
 app.get('/api/cubes', function(req, res) {
-    console.log('service cubes');
-    //client.lrange('parentKey:master', 0, -1, function(err, reply){
-        client.get('value:master:' + req.param.keyName, function(err, reply){
-        console.log('got it: ' + reply);
-        if (reply){
-            var cubes = reply
-            res.send(cubes);
+    var parentKey = 'instance:master';
+    client.hgetall(parentKey, function(err, reply){
+        console.log(reply);
+        var cubes = [];
+        for (key in reply){
+            cubes.push({
+                keyName: key,
+                value: reply[key],
+                parentKey: parentKey
+            });
         }
+        console.log('cubes are :' + cubes);
+        res.send(cubes);
     });
 });
 
@@ -45,15 +50,21 @@ app.get('/api/cubes/:keyName', function(req, res) {
 // save a cube
 app.post('/api/cubes', function(req, res){
     var values = [];
-
+    var redisKey = 'instance:' + req.body.keyName;
+    
+    // add the cube values to one key
+    // TODO: figure out how to do this in one call, or queue them and submit at once?
     Object.keys(req.body).forEach(function (parameter) {
-        var redisKey = 'key:' + req.body.keyName;
         console.log('setting ' + redisKey + ' : ' + parameter + ' = ' + req.body[parameter]);
         client.hset(redisKey, parameter, req.body[parameter]);
     });
-
+    
+    // add the cube key to it's parent
+    client.hset('instance:master', redisKey, req.body.value);
     console.log(values);
-   res.send(req.body);
+
+    // send it back
+    res.send(req.body);
 });
 app.listen(8000);
 
@@ -79,13 +90,33 @@ app.listen(8000);
 // examples:
 
 /////////////////////
-// an email address
+// simple: an email address
 
-// keyName: type:123
+// keyName: type:1
 // parentKey: type:master
 // cubeType: type:string
-// cubeValue: email
+// value: email
 
 /////////////////////
 // 
-// a grocery list
+// more complex: a grocery list
+
+// keyName: type:1
+// parentKey: type:master
+// cubeType: type:string
+// value: to buy
+
+// keyName: type:2
+// parentKey: instance: master
+// cubeType: list:1
+// value: grocery list
+
+// keyName: instance:3
+// parentKey: instance:master
+// cubeType: type:1
+// value: cheese
+
+// keyName: instance:4
+// parentKey: instance:master
+// cubeType: type:1
+// value: butter

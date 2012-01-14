@@ -6,7 +6,7 @@ angular.service('cubesApp', function($route, $location, $window) {
 
   $route.when('/cubes', {template: 'partials/cubes.html', controller: CubeController});
   $route.when('/config', {template: 'partials/config.html', controller: ConfigController});
-  $route.when('/item/:key', {template: 'partials/cubechild.html', controller: ChildController});
+  $route.when('/item/:keyName', {template: 'partials/cubechild.html', controller: ChildController});
 
   var self = this;
 
