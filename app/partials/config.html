@@ -1,1 +1,14 @@
 <h3>Setup System</h3>
+<form ng:submit="addType()">
+  <div>
+  	New Type: <input type="text" name="newValue" size="35" placeholder="value">
+  	<select name="cubeType" ng:options="t.value for t in cubeTypes"></select>
+  	<input type="submit" value="add">
+</div>
+</form>
+<h2>Current Items</h2>
+<ol>
+	<li ng:repeat="item in items">
+		<a href="#/item/{{item.keyName}}">{{item.value}}</a> <a href ng:click="items.$remove(item)">X</a>
+	</li>
+</ol>

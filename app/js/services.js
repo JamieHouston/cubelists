@@ -1,5 +1,8 @@
-angular.service('wcf', function($resource){
+angular.service('Api', function($resource){
   
+    return $resource('api/cubes', {},
+        {create: {method: 'POST'}}
+    );
 });
 
 angular.service('cubesApp', function($route, $location, $window) {
