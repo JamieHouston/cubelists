@@ -25,9 +25,18 @@ function ChildController ($xhr){
     });
 }
 
-function CubeController (Api){
-  function showCube(data){
-    self.items.push(data);
+function ListController (Api){
+  function showData(data){
+    if (self.parentKey && self.parentKey.length && self.parentKey == data.keyName){
+      self.cube = data;
+      showData(data.cubes);
+    } else {
+      if ($.isArray(data)) {
+        data.forEach(showData);
+      } else {
+        self.items.push(data);
+      }
+    }
   }
 
   function showError (xhr, ajaxOptions, thrownError){
@@ -38,15 +47,18 @@ function CubeController (Api){
 
   var self = this;
 
+  self.parentKey = self.params.parentKey;
+
   self.newValue = "";
 
   self.items = [];
   
-  Api.query(function(cubes){
-    cubes.forEach(function(cube){
-      showCube(cube);
-    });
-  });
+  if (self.parentKey && self.parentKey.length){
+    Api.get({keyName: self.parentKey}, showData);
+  } else {
+    self.cube = {value:"Lists"};
+    Api.query(showData);
+  }
   
   self.addCube = function(){
     if (self.newValue.length){
@@ -54,7 +66,7 @@ function CubeController (Api){
             value: self.newValue,
             keyName: generateKey(),
             cubeType: 'string',
-            parentKey: 'master'
+            parentKey: self.parentKey
         };
 
         //Wcf.save(cube);
@@ -64,7 +76,7 @@ function CubeController (Api){
             , url: "/api/cubes"
             , data: cube
             , error: showError
-            , success: showCube
+            , success: showData
        });
 
         self.newValue = "";

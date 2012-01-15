@@ -1,13 +1,14 @@
 angular.service('Api', function($resource){
   
-    return $resource('api/cubes', {},
+    return $resource('api/cubes/:keyName', {keyName: ''},
         {create: {method: 'POST'}}
     );
 });
 
 angular.service('cubesApp', function($route, $location, $window) {
 
-  $route.when('/cubes', {template: 'partials/cubes.html', controller: CubeController});
+  $route.when('/lists', {template: 'partials/cubes.html', controller: ListController});
+  $route.when('/lists/:parentKey', {template: 'partials/cubes.html', controller: ListController});
   $route.when('/config', {template: 'partials/config.html', controller: ConfigController});
   $route.when('/item/:keyName', {template: 'partials/cubechild.html', controller: ChildController});
 
@@ -15,7 +16,7 @@ angular.service('cubesApp', function($route, $location, $window) {
 
   $route.onChange(function() {
     if ($location.hash === '') {
-      $location.updateHash('/cubes');
+      $location.updateHash('/lists');
       self.$eval();
     } else {
       $route.current.scope.params = $route.current.params;

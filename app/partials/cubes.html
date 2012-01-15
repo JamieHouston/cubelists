@@ -4,9 +4,9 @@
   	<input type="submit" value="add">
 </div>
 </form>
-<h2>Current Items</h2>
+<h2>{{cube.value}}</h2>
 <ol>
 	<li ng:repeat="item in items">
-		<a href="#/item/{{item.keyName}}">{{item.value}}</a>
+		<a href="#/lists/{{item.keyName}}">{{item.value}}</a>
 	</li>
 </ol>

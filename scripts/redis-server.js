@@ -22,7 +22,10 @@ app.get('/api/cubes', function(req, res) {
 app.get('/api/cubes/:keyName', function(req, res) {
     var keyName = req.params.keyName;
     dao.getList(keyName, function(list){
-        res.send(list);
+        dao.getCubes(keyName, function(cubes){
+            list.cubes = cubes;
+            res.send(list); 
+        });
     });
 });
 
