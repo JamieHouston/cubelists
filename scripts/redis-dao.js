@@ -35,7 +35,7 @@ exports.getList = function(keyName, callback){
 }
 
 exports.getCubes = function(keyName, callback){
-	getChildren(keyName, callback);
+	getChildren('list:' + keyName, callback);
 }
 
 exports.saveList = function(list, callback){
@@ -49,7 +49,10 @@ exports.saveList = function(list, callback){
     });
     
     // add the cube key to it's parent
-    client.hset('list:master', list.keyName, list.value);
+    var parentKey = 'list:' + ((list.parentKey && list.parentKey.length)
+    	? list.parentKey
+    	: 'master');
+    client.hset(parentKey, list.keyName, list.value);
 
     callback && callback(list);
 }
