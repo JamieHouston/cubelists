@@ -14,44 +14,43 @@ app.use(express.bodyParser());
 dao.setup();
 
 // get all of the parent cubes
-app.get('/api/cubes', function(req, res) {
-    dao.getLists(function(lists){
-       res.send(lists); 
+app.get('/api/:cubeType', function(req, res) {
+    dao.getCubes({cubeType: req.params.cubeType}, function(cubes){
+       res.send(cubes); 
     });
 });
 
-// get a single cube
-app.get('/api/cubes/:keyName', function(req, res) {
-    var keyName = req.params.keyName;
-    dao.getList(keyName, function(list){
-        dao.getCubes(keyName, function(cubes){
-            list.cubes = cubes;
-            res.send(list); 
-        });
-    });
-});
-
-// get a single cube
-app.get('/api/cubes/:cubeType/:keyName', function(req, res) {
-    var keyName = req.params.keyName;
-    var cubeType = req.params.cubeType;
-    dao.getList(keyName, function(list){
-        dao.getCubes(keyName, function(cubes){
-            list.cubes = cubes;
-            res.send(list); 
+// get a single cube and it's children
+app.get('/api/:cubeType/:keyName', function(req, res) {
+    dao.getCube({keyName: req.params.keyName, cubeType: req.params.cubeType}, function(cube){
+        dao.getCubes({keyName: cube.parentKey, cubeType: req.params.cubeType}, function(cubes){
+            cube.cubes = cubes;
+            res.send(cube);
         });
     });
 });
 
 // save a cube
-app.post('/api/cubes', function(req, res){
-    dao.saveList(req.body);
+app.post('/api/:cubeType', function(req, res){
+    dao.saveCube({cubeType: req.params.cubeType, cube: req.body});
 
     // send it back
     res.send(req.body);
 });
+
+// save a cube
+app.delete('/api/:cubeType', function(req, res){
+    dao.saveCube({cubeType: req.params.cubeType, cube: req.body});
+
+    // send it back
+    res.send(req.body);
+});
+
 app.listen(8000);
 
+// api:
+// api/:cubeType - get all top level cubes of that type (such as lists/types/etc)
+// api/:cubeType/:keyName - get the cube with that type and key, and it's children
 
 
 // organization:

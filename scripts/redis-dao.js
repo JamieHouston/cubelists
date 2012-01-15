@@ -7,8 +7,9 @@ client.on("error", function (err) {
 });
 
 function getChildren(parentKey, callback){
+    console.log('getting children of ' + parentKey);
+
     client.hgetall(parentKey, function(err, reply){
-        console.log(reply);
         var cubes = [];
         for (key in reply){
             cubes.push({
@@ -17,7 +18,6 @@ function getChildren(parentKey, callback){
                 parentKey: parentKey
             });
         }
-        console.log('cubes are :' + cubes);
         callback && callback(cubes);
     });
 }
@@ -30,9 +30,8 @@ function getCube(keyName, callback){
     });
 }
 
-function saveCube(entityType, cube, callback){
-    var redisKey = entityType + ':' + cube.keyName;
-	
+function saveCube(cubeType, cube, callback){
+
 	// add the cube values to one key
     // TODO: figure out how to do this in one call, or queue them and submit at once?
     Object.keys(cube).forEach(function (parameter) {
@@ -42,7 +41,7 @@ function saveCube(entityType, cube, callback){
 
     
     // add the cube key to it's parent
-    var parentKey = entityType + ':' + ((cube.parentKey && cube.parentKey.length)
+    var parentKey = cubeType + ':' + ((cube.parentKey && cube.parentKey.length)
     	? cube.parentKey
     	: 'master');
     client.hset(parentKey, cube.keyName, cube.value);
@@ -55,36 +54,45 @@ exports.setup = function(){
 	getChildren('type:master', function(data){
 		if (data && data.length) return;
 
+        console.log('found no previous settings.  creating system types');
+
         var cube = {
             value: 'string',
-            keyName: 'system:string',
+            keyName: 'string',
             cubeType: 'system',
             parentKey: 'master'
         };
+
         saveCube('type', cube);
 
-        cube.keyName = 'system:date';
+        cube.keyName = 'date';
         cube.value = 'date';
         saveCube('type', cube);
 
-        cube.keyName = 'system.bool';
+        cube.keyName = 'bool';
         cube.value = 'checkbox';
         saveCube('type', cube);
 	});
 }
 
-exports.getLists = function(callback){
-    getChildren('list:master', callback);
-}
-
-exports.getList = function(keyName, callback){
+exports.getCube = function(params, callback){
+    var keyName = params.keyName;
 	getCube(keyName, callback);
 }
 
-exports.getCubes = function(keyName, callback){
-	getChildren('list:' + keyName, callback);
+exports.getCubes = function(params, callback){
+    var keyName = ((params.keyName && params.keyName.length)
+        ? params.keyName
+        : 'master');
+    var cubeType =  ((params.cubeType && params.cubeType.length)
+        ? params.cubeType
+        : 'list');
+
+	getChildren(cubeType + ':' + keyName, callback);
 }
 
-exports.saveList = function(list, callback){
-	saveCube('list', cube, callback);
+exports.saveCube = function(params, callback){
+    var cubeType = params.cubeType;
+    var cube = params.cube;
+    saveCube(cubeType, cube, callback);
 }

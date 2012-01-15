@@ -9,6 +9,6 @@
 <h2>Current Items</h2>
 <ol>
 	<li ng:repeat="item in items">
-		<a href="#/item/{{item.keyName}}">{{item.value}}</a> <a href ng:click="items.$remove(item)">X</a>
+		<a href="#/item/{{item.keyName}}">{{item.value}}</a> <a href ng:click="removeType(item)">X</a>
 	</li>
 </ol>

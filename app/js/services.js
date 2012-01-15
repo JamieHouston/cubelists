@@ -1,6 +1,6 @@
 angular.service('Api', function($resource){
   
-    return $resource('api/cubes/:keyName', {keyName: ''},
+    return $resource('api/:cubeType/:keyName', {keyName: '', cubeType: 'list'},
         {create: {method: 'POST'}}
     );
 });

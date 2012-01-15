@@ -1,3 +1,3 @@
 #!/bin/bash
-redis-server &
+redis-server ./config/redis.config &
 ./scripts/redis-server.js &
