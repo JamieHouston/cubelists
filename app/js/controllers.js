@@ -1,9 +1,16 @@
 /* App Controllers */
 function ConfigController(Api) {
+  function showData(data){
+    self.cubeTypes = data;
+    self.items = data;
+    self.cubeType = self.cubeTypes[1];
+  }
   var self = this;
 
-  self.cubeTypes = [{value:'string', keyName:'t1'}, {value:'number', keyName:'t2'},{value:'date',keyName:'t3'}];
-  self.cubeType = self.cubeTypes[1];
+  Api.query(showData);
+
+  //self.cubeTypes = [{value:'string', keyName:'t1'}, {value:'number', keyName:'t2'},{value:'date',keyName:'t3'}];
+  
 
   this.addType = function(){
     var cube = {
@@ -13,16 +20,6 @@ function ConfigController(Api) {
       parentKey: 'master'
     };
   }
-}
-
-function ChildController ($xhr){
-    var self = this;
-
-    self.keyName = this.params.keyName;
-
-    $xhr('GET', 'api/cubes/' + self.keyName, function(code, data) {
-        self.cube = data;
-    });
 }
 
 function ListController (Api){

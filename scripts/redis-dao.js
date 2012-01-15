@@ -22,16 +22,63 @@ function getChildren(parentKey, callback){
     });
 }
 
+function getCube(keyName, callback){
+	console.log('grabbing cube ' + keyName);
+    client.hgetall(keyName, function(err, reply){
+        console.log('got it: ' + reply)
+        callback && callback(reply);
+    });
+}
+
+function saveCube(entityType, cube, callback){
+    var redisKey = entityType + ':' + cube.keyName;
+	
+	// add the cube values to one key
+    // TODO: figure out how to do this in one call, or queue them and submit at once?
+    Object.keys(cube).forEach(function (parameter) {
+        console.log('setting ' + cube.keyName + ' : ' + parameter + ' = ' + cube[parameter]);
+        client.hset(cube.keyName, parameter, cube[parameter]);
+    });
+
+    
+    // add the cube key to it's parent
+    var parentKey = entityType + ':' + ((cube.parentKey && cube.parentKey.length)
+    	? cube.parentKey
+    	: 'master');
+    client.hset(parentKey, cube.keyName, cube.value);
+
+    callback && callback(list);
+
+}
+
+exports.setup = function(){
+	getChildren('type:master', function(data){
+		if (data && data.length) return;
+
+        var cube = {
+            value: 'string',
+            keyName: 'system:string',
+            cubeType: 'system',
+            parentKey: 'master'
+        };
+        saveCube('type', cube);
+
+        cube.keyName = 'system:date';
+        cube.value = 'date';
+        saveCube('type', cube);
+
+        cube.keyName = 'system.bool';
+        cube.value = 'checkbox';
+        saveCube('type', cube);
+	});
+}
+
 exports.getLists = function(callback){
     getChildren('list:master', callback);
 }
 
 exports.getList = function(keyName, callback){
-    console.log('grabbing cube ' + keyName);
-    client.hgetall(keyName, function(err, reply){
-        console.log('got it: ' + reply)
-        callback && callback(reply);
-    });
+	getCube(keyName, callback);
 }
 
 exports.getCubes = function(keyName, callback){
@@ -39,20 +86,5 @@ exports.getCubes = function(keyName, callback){
 }
 
 exports.saveList = function(list, callback){
-    var redisKey = 'list:' + list.keyName;
-    
-    // add the cube values to one key
-    // TODO: figure out how to do this in one call, or queue them and submit at once?
-    Object.keys(list).forEach(function (parameter) {
-        console.log('setting ' + list.keyName + ' : ' + parameter + ' = ' + list[parameter]);
-        client.hset(list.keyName, parameter, list[parameter]);
-    });
-    
-    // add the cube key to it's parent
-    var parentKey = 'list:' + ((list.parentKey && list.parentKey.length)
-    	? list.parentKey
-    	: 'master');
-    client.hset(parentKey, list.keyName, list.value);
-
-    callback && callback(list);
+	saveCube('list', cube, callback);
 }

@@ -11,6 +11,8 @@ console.log(staticPath);
 app.use(express.static(staticPath));
 app.use(express.bodyParser());
 
+dao.setup();
+
 // get all of the parent cubes
 app.get('/api/cubes', function(req, res) {
     dao.getLists(function(lists){
@@ -21,6 +23,18 @@ app.get('/api/cubes', function(req, res) {
 // get a single cube
 app.get('/api/cubes/:keyName', function(req, res) {
     var keyName = req.params.keyName;
+    dao.getList(keyName, function(list){
+        dao.getCubes(keyName, function(cubes){
+            list.cubes = cubes;
+            res.send(list); 
+        });
+    });
+});
+
+// get a single cube
+app.get('/api/cubes/:cubeType/:keyName', function(req, res) {
+    var keyName = req.params.keyName;
+    var cubeType = req.params.cubeType;
     dao.getList(keyName, function(list){
         dao.getCubes(keyName, function(cubes){
             list.cubes = cubes;
