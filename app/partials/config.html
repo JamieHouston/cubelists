@@ -1,7 +1,11 @@
 <h3>Setup System</h3>
-<form ng:submit="addType()">
+<form ng:submit="addCube()">
   <div>
   	New Type: <input type="text" name="newValue" size="35" placeholder="value">
+  	<select name="collection">
+  		<option>single</option>
+  		<option>list</option>
+  	</select>
   	<select name="cubeType" ng:options="t.value for t in cubeTypes"></select>
   	<input type="submit" value="add">
 </div>
@@ -9,6 +13,6 @@
 <h2>Current Items</h2>
 <ol>
 	<li ng:repeat="item in items">
-		<a href="#/item/{{item.keyName}}">{{item.value}}</a> <a href ng:click="removeType(item)">X</a>
+		<a href="#/setup/{{item.keyName}}">{{item.value}}</a> <a href ng:click="removeCube(item)">X</a>
 	</li>
 </ol>

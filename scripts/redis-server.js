@@ -40,7 +40,7 @@ app.post('/api/:cubeType', function(req, res){
 
 // save a cube
 app.delete('/api/:cubeType', function(req, res){
-    dao.saveCube({cubeType: req.params.cubeType, cube: req.body});
+    dao.deleteCube({cubeType: req.params.cubeType, cube: req.body});
 
     // send it back
     res.send(req.body);

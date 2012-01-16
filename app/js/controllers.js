@@ -15,21 +15,25 @@ function ConfigController(Api) {
     }
   }
   var self = this;
-
+  var cubeType = 'type';
+  
+  self.parentKey = self.params.parentKey;
   self.cubeTypes = [];
   self.items = [];
 
-  Api.query(
-    {cubeType: 'type'}, 
-    showData
-  );
+  if (self.parentKey && self.parentKey.length){
+    Api.get({keyName: self.parentKey}, showData);
+  } else {
+    self.cube = {value:cubeType};
+    Api.query({cubeType: cubeType}, showData);
+  }
 
-  this.addType = function(){
+  this.addCube = function(){
     var cube = {
       value: self.newValue,
       keyName: generateKey(),
       cubeType: self.cubeType.keyName,
-      parentKey: 'master'
+      parentKey: self.parentKey
     };
 
     //Api.save(cube,{cubeType:'type'});
@@ -37,23 +41,23 @@ function ConfigController(Api) {
     jQuery.ajax({ cache: false
         , type: "POST" // XXX should be POST
         , dataType: "json"
-        , url: "/api/type"
+        , url: "/api/" + cubeType
         , data: cube
         , error: showError
         , success: showData
    });
   }
 
-  this.removeType = function(item){
+  this.removeCube = function(item){
     jQuery.ajax({ cache: false
         , type: "DELETE" // XXX should be POST
         , dataType: "json"
-        , url: "/api/type"
+        , url: "/api/" + cubeType
         , data: item
         , error: showError
-        , success: showData
    });
-    self.items.$remove(item);
+   
+    //self.items.$remove(item);
   }
 }
 
@@ -70,6 +74,7 @@ function ListController (Api){
       }
     }
   }
+  var cubeType = 'list';
 
   var self = this;
 
@@ -82,8 +87,8 @@ function ListController (Api){
   if (self.parentKey && self.parentKey.length){
     Api.get({keyName: self.parentKey}, showData);
   } else {
-    self.cube = {value:"Lists"};
-    Api.query(showData);
+    self.cube = {value: cubeType};
+    Api.query({cubeType: cubeType}, showData);
   }
   
   self.addCube = function(){
@@ -91,7 +96,7 @@ function ListController (Api){
         var cube = {
             value: self.newValue,
             keyName: generateKey(),
-            cubeType: 'string', // TODO: pass correct cubeType here
+            cubeType: 'string',
             parentKey: self.parentKey
         };
 
@@ -99,7 +104,7 @@ function ListController (Api){
         jQuery.ajax({ cache: false
             , type: "POST" // XXX should be POST
             , dataType: "json"
-            , url: "/api/list"
+            , url: "/api/" + cubeType
             , data: cube
             , error: showError
             , success: showData
@@ -107,6 +112,17 @@ function ListController (Api){
 
         self.newValue = "";
     }
+  }
+
+  this.removeCube = function(cube){
+    jQuery.ajax({ cache: false
+        , type: "DELETE" // XXX should be POST
+        , dataType: "json"
+        , url: "/api/" + cubeType
+        , data: cube
+        , error: showError
+   });
+    self.items.$remove(item);
   }
 }
 

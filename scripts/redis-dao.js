@@ -30,6 +30,14 @@ function getCube(keyName, callback){
     });
 }
 
+function deleteCube(cubeType, cube, callback){
+    console.log('deleting key: ' + cube.keyName);
+    client.del(cube.keyName);
+
+    var cubeKey = cubeType + ':' + cube.parentKey;
+    client.hdel(cubeKey, keyName);
+}
+
 function saveCube(cubeType, cube, callback){
 
 	// add the cube values to one key
@@ -95,4 +103,10 @@ exports.saveCube = function(params, callback){
     var cubeType = params.cubeType;
     var cube = params.cube;
     saveCube(cubeType, cube, callback);
+}
+
+exports.deleteCube = function(params, callback){
+    var cubeType = params.cubeType;
+    var cube = params.cube;
+    deleteCube(cubeType, cube);
 }

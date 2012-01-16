@@ -7,6 +7,6 @@
 <h2>{{cube.value}}</h2>
 <ol>
 	<li ng:repeat="item in items">
-		<a href="#/lists/{{item.keyName}}">{{item.value}}</a>
+		<a href="#/lists/{{item.keyName}}">{{item.value}}</a> <a href ng:click="removeCube(item)">X</a>
 	</li>
 </ol>
