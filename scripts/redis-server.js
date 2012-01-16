@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-var PORT = 8000;
+var PORT = 8001;
 var NODESTER_PORT = 13706;
 var express = require('express');
 var dao = require('./redis-dao');
@@ -47,7 +47,7 @@ app.delete('/api/:cubeType', function(req, res){
     });
 });
 
-app.listen(8000);
+app.listen(PORT);
 
 // api:
 // api/:cubeType - get all top level cubes of that type (such as lists/types/etc)
