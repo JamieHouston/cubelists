@@ -1,24 +1,29 @@
 /* App Controllers */
+
+function SystemController(Api){
+  this.cubeType = 'system';
+  
+  var self = init(this, Api);
+}
+
 function ConfigController(Api) {
 
-  this.cubeType = 'type';
+  this.cubeType = 'types';
   
   var self = init(this, Api);
 
   this.addCube = function(){
     var cube = {
-      value: self.newValue,
+      cubeValue: self.newValue,
       keyName: generateKey(),
       cubeType: self.newType.keyName,
       parentKey: self.parentKey
     };
-
-    //Api.save(cube,{cubeType:'type'});
-    // TODO : make this work with api (.create or .save)
+    
     jQuery.ajax({ cache: false
-        , type: "POST" // XXX should be POST
+        , type: "GET"
         , dataType: "json"
-        , url: "/api/" + self.cubeType
+        , url: "/api/create"
         , data: cube
         , error: showError
         , success: self.showData
@@ -29,23 +34,22 @@ function ConfigController(Api) {
 }
 
 function ListController (Api){
-  this.cubeType = 'list';
+  this.cubeType = 'lists';
   var self = init(this, Api);
 
   self.addCube = function(){
     if (self.newValue.length){
         var cube = {
-            value: self.newValue,
+            cubeValue: self.newValue,
             keyName: generateKey(),
             cubeType: 'string',
             parentKey: self.parentKey
         };
 
-        // TODO : make this work with api (.create or .save)
         jQuery.ajax({ cache: false
-            , type: "POST" // XXX should be POST
+            , type: "GET"
             , dataType: "json"
-            , url: "/api/" + self.cubeType
+            , url: "/api/create"
             , data: cube
             , error: showError
             , success: self.showData
@@ -79,7 +83,7 @@ function showError (xhr, ajaxOptions, thrownError){
 function init(controller, Api){
   controller.removeCube = function(item){
     jQuery.ajax({ cache: false
-        , type: "DELETE" // XXX should be POST
+        , type: "DELETE"
         , dataType: "json"
         , url: "/api/" + controller.cubeType
         , data: item
@@ -89,7 +93,8 @@ function init(controller, Api){
   }
 
   controller.showData = function(data){
-    if (controller.parentKey && controller.parentKey.length && controller.parentKey == data.keyName){
+    //if (controller.parentKey && controller.parentKey.length && controller.parentKey == data.keyName){
+    if (data.cubes){
       controller.cube = data;
       controller.showData(data.cubes);
     } else {
@@ -101,7 +106,7 @@ function init(controller, Api){
     }
   }
 
-  controller.parentKey = (!!controller.params.parentKey) ? controller.params.parentKey : 'master';
+  controller.parentKey = (!!controller.params.parentKey) ? controller.params.parentKey : controller.cubeType;
 
   controller.newValue = "";
 
@@ -110,8 +115,8 @@ function init(controller, Api){
   if (controller.parentKey == 'master'){
 
     // cube value is displayed as header... for master just showing type
-    var headerName = controller.parentKey + ' ' + controller.cubeType + 's';
-    controller.cube = {value: headerName, parentKey: ''};
+    var headerName = controller.parentKey + ' ' + controller.cubeType;
+    controller.cube = {cubeValue: headerName, parentKey: ''};
 
     Api.query({cubeType: controller.cubeType}, controller.showData);
 
