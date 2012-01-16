@@ -35,7 +35,8 @@ function deleteCube(cubeType, cube, callback){
     client.del(cube.keyName);
 
     var cubeKey = cubeType + ':' + cube.parentKey;
-    client.hdel(cubeKey, keyName);
+    client.hdel(cubeKey, cube.keyName);
+    return true;
 }
 
 function saveCube(cubeType, cube, callback){
@@ -55,7 +56,6 @@ function saveCube(cubeType, cube, callback){
     client.hset(parentKey, cube.keyName, cube.value);
 
     callback && callback(list);
-
 }
 
 exports.setup = function(){
@@ -108,5 +108,5 @@ exports.saveCube = function(params, callback){
 exports.deleteCube = function(params, callback){
     var cubeType = params.cubeType;
     var cube = params.cube;
-    deleteCube(cubeType, cube);
+    return deleteCube(cubeType, cube);
 }
