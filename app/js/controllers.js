@@ -3,6 +3,7 @@
 function SystemController(Api){
   this.cubeType = 'system';
   
+  wireEvents(this, Api);
   var self = init(this, Api);
 }
 
@@ -10,54 +11,120 @@ function ConfigController(Api) {
 
   this.cubeType = 'types';
   
+  wireEvents(this, Api);
   var self = init(this, Api);
 
   this.addCube = function(){
-    var cube = {
-      cubeValue: self.newValue,
+    createCube(self, {cubeType: self.newType.cubeValue});
+    self.newValue = "";
+  }
+}
+
+function ListSetupController(Api){
+  this.cubeType = 'types';
+  
+  wireEvents(this, Api);
+  var self = init(this, Api);
+
+  Api.get({keyName:self.cubeType},function(data){
+    self.types = data.cubes;
+  });
+
+  this.addCube = function(){
+    createCube(self, {cubeType: self.newType.cubeValue});
+    self.newValue = "";
+  }
+}
+
+function ListEntryController(Api){
+  this.cubeType = this.params.parentKey;
+
+  var self = this;
+
+  wireEvents(self, Api);
+
+  Api.get({keyName:self.cubeType},function(data){
+      self.fields = data.cubes;
+  });
+
+  $.ajax({ cache: false
+      , type: "GET"
+      , dataType: "json"
+      , url: "/api/list/" + self.parentKey
+      , error: showError
+      , success: self.showData
+ });
+
+ self.addCube = function(){
+    var newRow = {
       keyName: generateKey(),
-      cubeType: self.newType.keyName,
-      parentKey: self.parentKey
+      parentKey: self.parentKey,
+      cubeValue: self.items.length + '',
+      cubeType: self.parentKey,
+      cubes: []
     };
     
-    jQuery.ajax({ cache: false
-        , type: "GET"
-        , dataType: "json"
-        , url: "/api/create"
-        , data: cube
-        , error: showError
-        , success: self.showData
-   });
+    for (var i = self.fields.length - 1; i >= 0; i--) {
+      var field = self.fields[i];
+      var $input = $('input[name="' + field.keyName + '"]');
 
-   self.newValue = "";
+      if ($input.val() && $input.val().length){
+        newRow.cubes.push(
+          {
+            parentKey: newRow.keyName,
+            cubeValue: $input.val(),
+            cubeType: field.keyName
+          }
+        );
+        $input.val('');
+      }
+    }
+
+    if (newRow.cubes.length){
+      createCube(self, newRow);
+
+      // temporarily don't show data
+      var showData = self.showData;
+      self.showData = null;
+      newRow.cubes.forEach(function(cube){
+        createCube(self, cube);
+      });
+      self.showData = showData;
+    }
   }
 }
 
 function ListController (Api){
   this.cubeType = 'lists';
+
+  wireEvents(this, Api);
   var self = init(this, Api);
 
   self.addCube = function(){
     if (self.newValue.length){
-        var cube = {
-            cubeValue: self.newValue,
-            keyName: generateKey(),
-            cubeType: 'string',
-            parentKey: self.parentKey
-        };
-
-        jQuery.ajax({ cache: false
-            , type: "GET"
-            , dataType: "json"
-            , url: "/api/create"
-            , data: cube
-            , error: showError
-            , success: self.showData
-       });
-
-        self.newValue = "";
+      createCube(controller);
+      self.newValue = "";
     }
   }
+}
+
+function createCube(controller, params){
+  var cube = {
+      keyName: params.keyName || generateKey(),
+      parentKey: params.parentKey || controller.parentKey,
+      cubeType: params.cubeType || controller.cubeType,
+      cubeValue: params.cubeValue || controller.newValue
+  };
+
+  $.ajax({ cache: false
+      , type: "GET"
+      , dataType: "json"
+      , url: "/api/create"
+      , data: cube
+      , error: showError
+      , success: controller.showData
+ });
+
 }
 
 function generateKey(){
@@ -80,12 +147,16 @@ function showError (xhr, ajaxOptions, thrownError){
     alert(thrownError);
 }
 
-function init(controller, Api){
+function wireEvents(controller, Api){
+  
+  controller.parentKey = (!!controller.params.parentKey) ? controller.params.parentKey : controller.cubeType;
+  controller.items = [];
+
   controller.removeCube = function(item){
-    jQuery.ajax({ cache: false
-        , type: "DELETE"
+  $.ajax({ cache: false
+        , type: "GET"
         , dataType: "json"
-        , url: "/api/" + controller.cubeType
+        , url: "/api/delete/" + item.keyName
         , data: item
         , error: showError
    });
@@ -93,7 +164,6 @@ function init(controller, Api){
   }
 
   controller.showData = function(data){
-    //if (controller.parentKey && controller.parentKey.length && controller.parentKey == data.keyName){
     if (data.cubes){
       controller.cube = data;
       controller.showData(data.cubes);
@@ -105,13 +175,12 @@ function init(controller, Api){
       }
     }
   }
+}
 
-  controller.parentKey = (!!controller.params.parentKey) ? controller.params.parentKey : controller.cubeType;
+function init(controller, Api){
 
   controller.newValue = "";
 
-  controller.items = [];
-  
   if (controller.parentKey == 'master'){
 
     // cube value is displayed as header... for master just showing type

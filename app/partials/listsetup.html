@@ -1,0 +1,20 @@
+<h3>List Properties</h3>
+<div id="cube_list">
+<h2>{{cube.cubeValue}}</h2>
+<form ng:submit="addCube()">
+  <div>
+  	New Type: <input type="text" name="newValue" size="35" placeholder="property name">
+  	<select name="collection">
+  		<option>single</option>
+  		<option>list</option>
+  	</select>
+  	<select name="newType" ng:options="t.cubeValue for t in types"></select>
+  	<input type="submit" value="add">
+</div>
+</form>
+<ul>
+	<li ng:repeat="item in items">
+		<a href="#/system/{{item.keyName}}">{{item.cubeValue}}</a> - {{item.cubeType}} <a href ng:click="removeCube(item)" class="delete">delete</a>
+	</li>
+</ul>
+</div>

@@ -8,8 +8,10 @@ angular.service('Api', function($resource){
 angular.service('cubesApp', function($route, $location, $window) {
 
   $route.when('/system', {template: 'partials/cubes.html', controller: SystemController});
+  $route.when('/system/Lists/:parentKey', {template: 'partials/listsetup.html', controller: ListSetupController});
+  $route.when('/system/:parentKey', {template: 'partials/config.html', controller: SystemController});
   $route.when('/lists', {template: 'partials/list.html', controller: ListController});
-  $route.when('/lists/:parentKey', {template: 'partials/list.html', controller: ListController});
+  $route.when('/lists/:parentKey', {template: 'partials/list.html', controller: ListEntryController});
   $route.when('/types', {template: 'partials/config.html', controller: ConfigController});
   $route.when('/types/:parentKey', {template: 'partials/config.html', controller: ConfigController});
   $route.when('/:parentKey', {template: 'partials/list.html', controller: ListController});

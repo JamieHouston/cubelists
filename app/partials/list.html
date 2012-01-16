@@ -3,7 +3,9 @@
 <h2>{{cube.cubeValue}}</h2>
 <form ng:submit="addCube()">
   <div>
-  	<input type="text" name="newValue" size="35" placeholder="value">
+  	<span ng:repeat="field in fields">{{field.cubeValue}}
+  		<input type="text" name="{{field.keyName}}" size="35" placeholder="value">
+  	</span>
   	<input type="submit" value="add">
 </div>
 </form>
