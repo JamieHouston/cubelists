@@ -85,7 +85,7 @@ function init(controller, Api){
         , data: item
         , error: showError
    });
-   angular.Array.remove(controller.items,item);
+   controller.items.splice($.inArray(item,controller.items),1);
   }
 
   controller.showData = function(data){
@@ -108,8 +108,13 @@ function init(controller, Api){
   controller.items = [];
   
   if (controller.parentKey == 'master'){
-    controller.cube = {value: controller.cubeType, parentKey: ''};
+
+    // cube value is displayed as header... for master just showing type
+    var headerName = controller.parentKey + ' ' + controller.cubeType + 's';
+    controller.cube = {value: headerName, parentKey: ''};
+
     Api.query({cubeType: controller.cubeType}, controller.showData);
+
   } else {
     Api.get({keyName: controller.parentKey}, controller.showData);
   }

@@ -54,6 +54,8 @@ function saveCube(cubeType, cube, callback){
     var parentKey = cubeType + ':' + ((cube.parentKey && cube.parentKey.length)
     	? cube.parentKey
     	: 'master');
+
+    util.log('saveing parent ' + parentKey + ' : ' + cube.keyName + ' = ' + cube.value);
     client.hset(parentKey, cube.keyName, cube.value);
 
     callback && callback(list);
