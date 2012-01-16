@@ -2,3 +2,4 @@
 /scripts/web-server.js.logs
 *.rdb
 .nodester.appconfig
+redis-appendonly.aof

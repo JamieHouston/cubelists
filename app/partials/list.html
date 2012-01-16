@@ -1,0 +1,15 @@
+<a href="#/lists/{{cube.parentKey}}">&lt; back</a>
+<div id="cube_list">
+<h2>{{cube.value}}</h2>
+<form ng:submit="addCube()">
+  <div>
+  	<input type="text" name="newValue" size="35" placeholder="value">
+  	<input type="submit" value="add">
+</div>
+</form>
+<ul>
+	<li ng:repeat="item in items">
+		<a href="#/lists/{{item.keyName}}">{{item.value}}</a> <a href ng:click="removeCube(item)" class="delete">delete</a>
+	</li>
+</ul>
+</div>
