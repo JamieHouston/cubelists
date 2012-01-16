@@ -1,3 +1,4 @@
 /node_modules/
 /scripts/web-server.js.logs
 *.rdb
+.nodester.appconfig

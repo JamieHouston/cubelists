@@ -1,4 +1,5 @@
-var redis = require("redis");
+var redis = require('redis');
+var util = require('util');
 
 var client = redis.createClient();
 
@@ -7,7 +8,7 @@ client.on("error", function (err) {
 });
 
 function getChildren(parentKey, callback){
-    console.log('getting children of ' + parentKey);
+    util.log('getting children of ' + parentKey);
 
     client.hgetall(parentKey, function(err, reply){
         var cubes = [];
@@ -23,9 +24,9 @@ function getChildren(parentKey, callback){
 }
 
 function getCube(keyName, callback){
-	console.log('grabbing cube ' + keyName);
+	util.log('grabbing cube ' + keyName);
     client.hgetall(keyName, function(err, reply){
-        console.log('got it: ' + reply)
+        util.log('get cube response: ' + util.inspect(reply));
         callback && callback(reply);
     });
 }
@@ -44,7 +45,7 @@ function saveCube(cubeType, cube, callback){
 	// add the cube values to one key
     // TODO: figure out how to do this in one call, or queue them and submit at once?
     Object.keys(cube).forEach(function (parameter) {
-        console.log('setting ' + cube.keyName + ' : ' + parameter + ' = ' + cube[parameter]);
+        util.log('setting ' + cube.keyName + ' : ' + parameter + ' = ' + cube[parameter]);
         client.hset(cube.keyName, parameter, cube[parameter]);
     });
 
@@ -62,7 +63,7 @@ exports.setup = function(){
 	getChildren('type:master', function(data){
 		if (data && data.length) return;
 
-        console.log('found no previous settings.  creating system types');
+        util.log('found no previous settings.  creating system types');
 
         var cube = {
             value: 'string',

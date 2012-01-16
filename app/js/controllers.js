@@ -26,32 +26,6 @@ function ConfigController(Api) {
 
    self.newValue = "";
   }
-
-  this.removeCube = function(item){
-    jQuery.ajax({ cache: false
-        , type: "DELETE" // XXX should be POST
-        , dataType: "json"
-        , url: "/api/" + self.cubeType
-        , data: item
-        , error: showError
-   });
-   angular.Array.remove(self.items,item);
-  }
-
-  self.showData = function(data){
-    if (self.parentKey && self.parentKey.length && self.parentKey == data.keyName){
-      self.cube = data;
-      self.showData(data.cubes);
-    } else {
-      if ($.isArray(data)) {
-        data.forEach(self.showData);
-        self.newType = self.items[0];
-      } else {
-        self.items.push(data);
-      }
-    }
-  }
-
 }
 
 function ListController (Api){
@@ -80,30 +54,6 @@ function ListController (Api){
         self.newValue = "";
     }
   }
-
-  self.showData = function(data){
-    if (self.parentKey && self.parentKey.length && self.parentKey == data.keyName){
-      self.cube = data;
-      self.showData(data.cubes);
-    } else {
-      if ($.isArray(data)) {
-        data.forEach(self.showData);
-      } else {
-        self.items.push(data);
-      }
-    }
-  }
-
-  self.removeCube = function(cube){
-    jQuery.ajax({ cache: false
-        , type: "DELETE" // XXX should be POST
-        , dataType: "json"
-        , url: "/api/" + self.cubeType
-        , data: cube
-        , error: showError
-   });
-    angular.Array.remove(self.items,item);
-  }
 }
 
 function generateKey(){
@@ -127,6 +77,30 @@ function showError (xhr, ajaxOptions, thrownError){
 }
 
 function init(controller, Api){
+  controller.removeCube = function(item){
+    jQuery.ajax({ cache: false
+        , type: "DELETE" // XXX should be POST
+        , dataType: "json"
+        , url: "/api/" + controller.cubeType
+        , data: item
+        , error: showError
+   });
+   angular.Array.remove(controller.items,item);
+  }
+
+  controller.showData = function(data){
+    if (controller.parentKey && controller.parentKey.length && controller.parentKey == data.keyName){
+      controller.cube = data;
+      controller.showData(data.cubes);
+    } else {
+      if ($.isArray(data)) {
+        data.forEach(controller.showData);
+      } else {
+        controller.items.push(data);
+      }
+    }
+  }
+
   controller.parentKey = (!!controller.params.parentKey) ? controller.params.parentKey : 'master';
 
   controller.newValue = "";
@@ -135,9 +109,9 @@ function init(controller, Api){
   
   if (controller.parentKey == 'master'){
     controller.cube = {value: controller.cubeType, parentKey: ''};
-    Api.query({cubeType: controller.cubeType}, self.showData);
+    Api.query({cubeType: controller.cubeType}, controller.showData);
   } else {
-    Api.get({keyName: controller.parentKey}, self.showData);
+    Api.get({keyName: controller.parentKey}, controller.showData);
   }
 
   return controller;

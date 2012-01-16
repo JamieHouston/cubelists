@@ -23,7 +23,7 @@ app.get('/api/:cubeType', function(req, res) {
 // get a single cube and it's children
 app.get('/api/:cubeType/:keyName', function(req, res) {
     dao.getCube({keyName: req.params.keyName, cubeType: req.params.cubeType}, function(cube){
-        dao.getCubes({keyName: cube.parentKey, cubeType: req.params.cubeType}, function(cubes){
+        dao.getCubes({keyName: cube.keyName, cubeType: req.params.cubeType}, function(cubes){
             cube.cubes = cubes;
             res.send(cube);
         });
