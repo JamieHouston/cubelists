@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+var PORT = 8000;
+var NODESTER_PORT = 13706;
 var express = require('express');
 var dao = require('./redis-dao');
 
