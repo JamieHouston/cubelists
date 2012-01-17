@@ -3,8 +3,18 @@
 <h2>{{cube.cubeValue}}</h2>
 <form ng:submit="addCube()">
   <div>
-  	<span ng:repeat="field in fields">{{field.cubeValue}}
-  		<input type="text" name="{{field.keyName}}" size="35" placeholder="value">
+  	<span ng:repeat="field in fields">
+  		<ng:switch on="field.cubeType">
+  			<span ng:switch-when="String">
+  				<input type="text" name="{{field.keyName}}" size="35" placeholder="{{field.cubeValue}}">
+  			</span>
+  			<span ng:switch-when="Checkbox">
+  				<input type="checkbox" name="{{field.keyName}}">
+  			</span>
+  			<span ng:switch-when="DateTime">
+  				<input type="text" name="{{field.keyName}}">
+  			</span>
+  		</ng:switch>
   	</span>
   	<input type="submit" value="add">
 </div>

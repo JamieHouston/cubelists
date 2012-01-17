@@ -1,5 +1,4 @@
-<h3>Setup System</h3>
-<a ng:hide="cube.parentKey.length" href="#/config/{{cube.parentKey}}">&lt; back</a>
+<a ng:hide="cube.parentKey.length" href="#/{{cube.parentKey}}">&lt; back</a>
 <div id="cube_list">
 <h2>{{cube.cubeValue}}</h2>
 <form ng:submit="addCube()">
@@ -10,7 +9,8 @@
 </form>
 <ul>
 	<li ng:repeat="item in items">
-		<a href="#/system/{{parentKey}}/{{item.keyName}}">{{item.cubeValue}}</a> <a href ng:click="removeCube(item)" class="delete">delete</a>
+		<cube:link></cube:link>
+		<a href="#/{{area}}/{{parentKey}}/{{item.keyName}}">{{item.cubeValue}}</a> <a href ng:click="removeCube(item)" class="delete">delete</a>
 	</li>
 </ul>
 </div>

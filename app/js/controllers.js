@@ -2,7 +2,6 @@
 
 function SystemController(Api){
   this.cubeType = 'system';
-  
   wireEvents(this, Api);
   var self = init(this, Api);
 }
