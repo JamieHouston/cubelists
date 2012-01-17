@@ -50,17 +50,25 @@ function ListEntryController(Api){
   $.ajax({ cache: false
       , type: "GET"
       , dataType: "json"
-      , url: "/api/list/" + self.parentKey
+      , url: "/api/lists/" + self.parentKey
       , error: showError
       , success: self.showData
  });
+
+ self.showData = function(data){
+    if ($.isArray(data)) {
+      data.forEach(self.showData);
+    } else {
+      self.items.push(data);
+    }
+ }
 
  self.addCube = function(){
     var newRow = {
       keyName: generateKey(),
       parentKey: self.parentKey,
       cubeValue: self.items.length + '',
-      cubeType: self.parentKey,
+      cubeType: 'CubeData',
       cubes: []
     };
     
@@ -102,13 +110,14 @@ function ListController (Api){
 
   self.addCube = function(){
     if (self.newValue.length){
-      createCube(controller);
+      createCube(self);
       self.newValue = "";
     }
   }
 }
 
 function createCube(controller, params){
+  params = params || {};
   var cube = {
       keyName: params.keyName || generateKey(),
       parentKey: params.parentKey || controller.parentKey,

@@ -11,7 +11,8 @@
 </form>
 <ul>
 	<li ng:repeat="item in items">
-		<a href="#/lists/{{item.keyName}}">{{item.cubeValue}}</a> <a href ng:click="removeCube(item)" class="delete">delete</a>
+		<span ng:repeat="cube in item.cubes">{{cube.cubeValue}}</span>
+		<a href ng:click="removeCube(item)" class="delete">delete</a>
 	</li>
 </ul>
 </div>
