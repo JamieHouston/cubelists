@@ -10,7 +10,7 @@
 <ul>
 	<li ng:repeat="item in items">
 		<cube:link></cube:link>
-		<a href="#/{{area}}/{{parentKey}}/{{item.keyName}}">{{item.cubeValue}}</a> <a href ng:click="removeCube(item)" class="delete">delete</a>
+		<a href="#/system/{{parentKey}}/{{item.keyName}}">{{item.cubeValue}}</a> <a href ng:click="removeCube(item)" class="delete">delete</a>
 	</li>
 </ul>
 </div>
